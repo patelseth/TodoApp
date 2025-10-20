@@ -155,5 +155,59 @@ namespace TodoApp.UnitTests.Services
         }
 
         #endregion
+
+        #region Fetch / Filter Tests
+
+        /// <summary>
+        /// Verifies that GetTodosAsync returns all todos when no status filter is specified.
+        /// </summary>
+        [Fact]
+        public async Task GetTodosAsync_WhenNoStatusFilter_ShouldReturnAllTodos()
+        {
+            var mockRepo = new Mock<ITodoRepository>();
+            var todos = new[]
+            {
+                new Todo("Todo 1"),
+                new Todo("Todo 2"){ Status = TodoStatus.InProgress },
+                new Todo("Todo 3"){ Status = TodoStatus.Completed }
+            };
+
+            mockRepo.Setup(r => r.GetAllAsync())
+                    .ReturnsAsync(todos);
+
+            var service = new TodoService(mockRepo.Object);
+
+            var result = await service.GetTodosAsync();
+
+            Assert.Equal(3, result.Length);
+        }
+
+        /// <summary>
+        /// Verifies that GetTodosAsync filters todos by status correctly.
+        /// </summary>
+        [Fact]
+        public async Task GetTodosAsync_WhenStatusFilter_ShouldReturnOnlyMatchingTodos()
+        {
+            var mockRepo = new Mock<ITodoRepository>();
+            var todos = new[]
+            {
+                new Todo("Todo 1"),
+                new Todo("Todo 2"){ Status = TodoStatus.InProgress },
+                new Todo("Todo 3"){ Status = TodoStatus.Completed }
+            };
+
+            mockRepo.Setup(r => r.GetAllAsync())
+                    .ReturnsAsync(todos);
+
+            var service = new TodoService(mockRepo.Object);
+
+            var result = await service.GetTodosAsync(TodoStatus.InProgress);
+
+            Assert.Single(result);
+            Assert.Equal(TodoStatus.InProgress, result[0].Status);
+        }
+
+        #endregion
+
     }
 }
