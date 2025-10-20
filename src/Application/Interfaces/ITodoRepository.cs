@@ -9,7 +9,19 @@ namespace TodoApp.Application.Interfaces
     /// </summary>
     public interface ITodoRepository
     {
-        Task<Todo> GetByTitleAsync(string title); // Retrieves a Todo by title
-        Task<Todo> CreateAsync(Todo todo); // Creates a new Todo
+        /// <summary>
+        /// Retrieves a Todo by its title. Returns null if not found.
+        /// </summary>
+        Task<Todo?> GetByTitleAsync(string title);
+
+        /// <summary>
+        /// Creates a new Todo in the database.
+        /// </summary>
+        Task<Todo> CreateAsync(Todo todo);
+
+        /// <summary>
+        /// Updates an existing Todo in the database.
+        /// </summary>
+        Task<Todo> UpdateAsync(Todo todo);
     }
 }
