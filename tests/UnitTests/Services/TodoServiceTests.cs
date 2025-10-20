@@ -158,28 +158,35 @@ namespace TodoApp.UnitTests.Services
 
         #region Fetch / Filter Tests
 
-        /// <summary>
+         /// <summary>
         /// Verifies that GetTodosAsync returns all todos when no status filter is specified.
         /// </summary>
         [Fact]
         public async Task GetTodosAsync_WhenNoStatusFilter_ShouldReturnAllTodos()
         {
+            // Arrange
             var mockRepo = new Mock<ITodoRepository>();
-            var todos = new[]
-            {
-                new Todo("Todo 1"),
-                new Todo("Todo 2"){ Status = TodoStatus.InProgress },
-                new Todo("Todo 3"){ Status = TodoStatus.Completed }
-            };
+
+            // Create todos and update their status using ChangeStatus(), 
+            // since Status property is read-only
+            var todo1 = new Todo("Todo 1");
+            var todo2 = new Todo("Todo 2");
+            todo2.ChangeStatus(TodoStatus.InProgress);
+            var todo3 = new Todo("Todo 3");
+            todo3.ChangeStatus(TodoStatus.Completed);
+
+            var todos = new[] { todo1, todo2, todo3 };
 
             mockRepo.Setup(r => r.GetAllAsync())
                     .ReturnsAsync(todos);
 
             var service = new TodoService(mockRepo.Object);
 
+            // Act
             var result = await service.GetTodosAsync();
 
-            Assert.Equal(3, result.Length);
+            // Assert
+            Assert.Equal(3, result.Count());
         }
 
         /// <summary>
@@ -188,23 +195,28 @@ namespace TodoApp.UnitTests.Services
         [Fact]
         public async Task GetTodosAsync_WhenStatusFilter_ShouldReturnOnlyMatchingTodos()
         {
+            // Arrange
             var mockRepo = new Mock<ITodoRepository>();
-            var todos = new[]
-            {
-                new Todo("Todo 1"),
-                new Todo("Todo 2"){ Status = TodoStatus.InProgress },
-                new Todo("Todo 3"){ Status = TodoStatus.Completed }
-            };
+
+            var todo1 = new Todo("Todo 1");
+            var todo2 = new Todo("Todo 2");
+            todo2.ChangeStatus(TodoStatus.InProgress);
+            var todo3 = new Todo("Todo 3");
+            todo3.ChangeStatus(TodoStatus.Completed);
+
+            var todos = new[] { todo1, todo2, todo3 };
 
             mockRepo.Setup(r => r.GetAllAsync())
                     .ReturnsAsync(todos);
 
             var service = new TodoService(mockRepo.Object);
 
+            // Act
             var result = await service.GetTodosAsync(TodoStatus.InProgress);
 
+            // Assert
             Assert.Single(result);
-            Assert.Equal(TodoStatus.InProgress, result[0].Status);
+            Assert.Equal(TodoStatus.InProgress, result.First().Status);
         }
 
         #endregion

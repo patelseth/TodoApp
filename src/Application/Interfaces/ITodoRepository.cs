@@ -28,5 +28,10 @@ namespace TodoApp.Application.Interfaces
         /// Updates an existing Todo in the database.
         /// </summary>
         Task<Todo> UpdateAsync(Todo todo);
+
+        /// <summary>
+        /// Retrieves all Todos from the database.
+        /// </summary>
+        Task<IEnumerable<Todo>> GetAllAsync();
     }
 }

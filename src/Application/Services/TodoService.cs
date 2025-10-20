@@ -96,5 +96,22 @@ namespace TodoApp.Application.Services
             // Persist updated entity
             return await _repository.UpdateAsync(todo); // or UpdateAsync depending on repo
         }
+
+        /// <summary>
+        /// Retrieves all Todos from the repository.
+        /// Can optionally filter by status.
+        /// If status is null, returns all Todos.
+        /// </summary>
+        /// <param name="status">Optional status filter</param>
+        public async Task<IEnumerable<Todo>> GetTodosAsync(TodoStatus? status = null)
+        {
+            var todos = await _repository.GetAllAsync();
+
+            // Apply status filter if specified
+            if (status.HasValue)
+                todos = todos.Where(t => t.Status == status.Value);
+
+            return todos;
+        }
     }
 }
