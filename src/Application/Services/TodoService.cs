@@ -44,6 +44,43 @@ namespace TodoApp.Application.Services
         }
 
         /// <summary>
+        /// Updates an existing Todo's title and/or description.
+        /// Validates duplicate title only if title is changing.
+        /// Only persists if values actually change.
+        /// </summary>
+        /// <param name="id">The Todo id</param>
+        /// <param name="newTitle">New title</param>
+        /// <param name="newDescription">New description</param>
+        /// <returns>The updated Todo</returns>
+        public async Task<Todo> UpdateAsync(string id, string newTitle, string? newDescription = null)
+        {
+            var todo = await _repository.GetByIdAsync(id);
+
+            if (todo == null)
+                throw new TodoNotFoundException(id);
+
+            // Only validate if title is actually changing
+            if (todo.Title != newTitle)
+            {
+                var existing = await _repository.GetByTitleAsync(newTitle);
+                if (existing != null)
+                    throw new DuplicateTitleException();
+
+                todo.Title = newTitle;
+            }
+
+            // Update description if changed
+            if (todo.Description != newDescription)
+                todo.Description = newDescription;
+
+            // Persist only if any field changed
+            if (todo.Title != newTitle || todo.Description != newDescription)
+                await _repository.UpdateAsync(todo);
+
+            return todo;
+        }
+
+        /// <summary>
         /// Updates the status of a Todo using the entity's ChangeStatus method.
         /// This ensures that all domain rules for status transitions are met.
         /// Throws InvalidStatusTransitionException if the transition is invalid.

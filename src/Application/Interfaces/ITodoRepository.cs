@@ -15,6 +15,11 @@ namespace TodoApp.Application.Interfaces
         Task<Todo?> GetByTitleAsync(string title);
 
         /// <summary>
+        /// Retrieves a Todo by its unique identifier. Returns null if not found.
+        /// </summary>
+        Task<Todo?> GetByIdAsync(string id);
+
+        /// <summary>
         /// Creates a new Todo in the database.
         /// </summary>
         Task<Todo> CreateAsync(Todo todo);
