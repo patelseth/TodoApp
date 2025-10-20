@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Xunit;
 using TodoApp.Application.Services;
 using TodoApp.Application.Interfaces;
+using TodoApp.Infrastructure.Repositories;
+using TodoApp.Infrastructure.Settings;
 using TodoApp.Domain.Entities;
 using TodoApp.Domain.Exceptions;
+using MongoDB.Driver;
 
 namespace TodoApp.IntegrationTests
 {
@@ -21,9 +24,19 @@ namespace TodoApp.IntegrationTests
 
         public TodoServiceIntegrationTests()
         {
-            // Use your MongoDB Atlas connection string and database
-            _repository = new TodoRepository("mongodb-connection-string", "TodoDb");
+            // MongoDB settings for tests
+            var settings = new MongoDbSettings
+            {
+                ConnectionString = "mongodb+srv://TodoAdmin:TodoAdmin123!@todocluster.uhecxgp.mongodb.net",
+                DatabaseName = "TodoDb"
+            };
+
+            _repository = new TodoRepository(settings);
             _service = new TodoService(_repository);
+
+            // Clean up collection before each test run
+            var client = new MongoClient(settings.ConnectionString);
+            client.GetDatabase(settings.DatabaseName).DropCollection("Todos");
         }
 
         /// <summary>

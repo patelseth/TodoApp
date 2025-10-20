@@ -33,5 +33,10 @@ namespace TodoApp.Application.Interfaces
         /// Retrieves all Todos from the database.
         /// </summary>
         Task<IEnumerable<Todo>> GetAllAsync();
+
+        /// <summary>
+        /// Delete a Todo in the database by id.
+        /// </summary>
+        Task<Todo?> DeleteAsync(string id);
     }
 }

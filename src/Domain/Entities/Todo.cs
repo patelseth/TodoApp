@@ -1,4 +1,6 @@
 using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using TodoApp.Domain.Exceptions;
 
 namespace TodoApp.Domain.Entities
@@ -8,6 +10,14 @@ namespace TodoApp.Domain.Entities
     /// </summary>
     public class Todo
     {
+        /// <summary>
+        /// MongoDB ObjectId used as the primary key in the database.
+        /// Automatically generated if not set.
+        /// </summary>
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = null!;
+
         /// <summary>
         /// Required field used in duplicate-title validation.
         /// </summary>
