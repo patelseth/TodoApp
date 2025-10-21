@@ -11,7 +11,7 @@ A full-stack To-Do List application built with **React** (frontend), **ASP.NET C
 - Status tracking with enforced transitions:  
   `Pending → In Progress → Completed`
 - Filter todos by status
-- Responsive UI (works on desktop and mobile)
+- Responsive UI (desktop and mobile)
 - Error handling for duplicate titles and invalid status transitions
 
 ---
@@ -53,29 +53,24 @@ cd TodoApp
 
 ### 3. Configure the Backend
 
-- In `appsettings.json` (or via environment variables), set your MongoDB connection string.
+- In `backend/Infrastructure/` (or via environment variables), set your MongoDB connection string and other configuration.
 
 ---
 
 ### 4. Run the Backend
 
 ```sh
-cd src
-dotnet run --project Api/Api.csproj
+cd backend/src
+dotnet run
 ```
 The API will run on `http://localhost:5000`.
 
-To run tests
-```sh
-cd src
-dotnet test
-```
 ---
 
 ### 5. Run the Frontend
 
 ```sh
-cd src/Client
+cd frontend/src
 npm install
 npm start
 ```
@@ -90,22 +85,42 @@ No extra setup is needed if both servers are running locally.
 
 ---
 
+## Testing
+
+Backend tests are located in `backend/tests/`, parallel to `backend/src/`.
+
+Run backend tests:
+
+```sh
+cd backend/tests
+dotnet test
+```
+
+---
+
 ## Project Structure
 
 ```
-src/
-  Api/                # ASP.NET Core Web API
-  Application/        # Application logic and requests
-  Domain/             # Domain entities and exceptions
-  Client/             # React frontend (in src/Client)
-    src/
-      api/            # API calls
-      components/     # React components
-      hooks/          # Custom hooks
-      models/         # TypeScript models
-      pages/          # Page components
-      styles/         # CSS
-tests/
+TodoApp/
+├── backend/
+│   ├── src/
+│   │   ├── Api/                # ASP.NET Core Web API
+│   │   ├── Application/        # Application logic and requests
+│   │   ├── Domain/             # Domain entities and exceptions
+│   ├── Infrastructure/         # Configuration and infrastructure
+│   └── tests/                  # Backend tests (parallel to src)
+├── frontend/
+│   └── src/
+│       ├── api/            # API calls
+│       ├── components/     # React components
+│       ├── hooks/          # Custom hooks
+│       ├── models/         # TypeScript models
+│       ├── pages/          # Page components
+│       ├── styles/         # CSS
+│       ├── App.tsx
+│       └── index.tsx
+├── README.md
+└── ...
 ```
 
 ---
@@ -115,6 +130,6 @@ tests/
 - Only these transitions are allowed:
   - `Pending` → `In Progress`
   - `In Progress` → `Completed`
-- All other transitions are rejected and covered by tests.
+- All other transitions are rejected and covered by backend tests.
 
 ---
