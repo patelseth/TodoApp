@@ -1,6 +1,4 @@
-using System;
-
-namespace TodoApp.Domain.Exceptions
+namespace Domain.Exceptions
 {
     /// <summary>
     /// Exception thrown when a Todo with the specified ID is not found in the system.

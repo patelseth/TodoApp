@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
-using TodoApp.Domain.Entities;
+using Domain.Entities;
 
-namespace TodoApp.Application.Interfaces
+namespace Application.Interfaces
 {
     /// <summary>
     /// Service abstraction for Todo operations.

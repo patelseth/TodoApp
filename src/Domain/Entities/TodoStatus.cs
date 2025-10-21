@@ -1,4 +1,4 @@
-namespace TodoApp.Domain.Entities
+namespace Domain.Entities
 {
     /// <summary>
     /// Represents allowed states for a Todo item.

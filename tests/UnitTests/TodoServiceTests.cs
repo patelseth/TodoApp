@@ -1,13 +1,11 @@
-using System.Threading.Tasks;
 using Moq;
 using Xunit;
+using Domain.Entities;
+using Domain.Exceptions;
+using Application.Interfaces;
+using Application.Services;
 
-using TodoApp.Application.Services;
-using TodoApp.Application.Interfaces;
-using TodoApp.Domain.Entities;
-using TodoApp.Domain.Exceptions;
-
-namespace TodoApp.UnitTests.Services
+namespace UnitTests
 {
     /// <summary>
     /// Unit tests for TodoService using mocked repository.
@@ -126,7 +124,9 @@ namespace TodoApp.UnitTests.Services
 
             Assert.Equal("New Title", existingTodo.Title);
             Assert.Equal("New description", existingTodo.Description);
-            mockRepo.Verify(r => r.UpdateAsync(existingTodo), Times.Once);
+
+            // Verify that an update was attempted, but don't require the exact instance reference.
+            mockRepo.Verify(r => r.UpdateAsync(It.Is<Todo>(t => t.Title == "New Title" && t.Description == "New description")), Times.Once);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace TodoApp.UnitTests.Services
 
         #region Fetch / Filter Tests
 
-         /// <summary>
+        /// <summary>
         /// Verifies that GetTodosAsync returns all todos when no status filter is specified.
         /// </summary>
         [Fact]
@@ -173,6 +173,8 @@ namespace TodoApp.UnitTests.Services
             var todo2 = new Todo("Todo 2");
             todo2.ChangeStatus(TodoStatus.InProgress);
             var todo3 = new Todo("Todo 3");
+            // Move through allowed transitions to reach Completed
+            todo3.ChangeStatus(TodoStatus.InProgress);
             todo3.ChangeStatus(TodoStatus.Completed);
 
             var todos = new[] { todo1, todo2, todo3 };
@@ -202,6 +204,8 @@ namespace TodoApp.UnitTests.Services
             var todo2 = new Todo("Todo 2");
             todo2.ChangeStatus(TodoStatus.InProgress);
             var todo3 = new Todo("Todo 3");
+            // Move through allowed transitions to reach Completed
+            todo3.ChangeStatus(TodoStatus.InProgress);
             todo3.ChangeStatus(TodoStatus.Completed);
 
             var todos = new[] { todo1, todo2, todo3 };

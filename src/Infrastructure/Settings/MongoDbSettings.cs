@@ -1,4 +1,4 @@
-namespace TodoApp.Infrastructure.Settings
+namespace Infrastructure.Settings
 {
     public class MongoDbSettings
     {

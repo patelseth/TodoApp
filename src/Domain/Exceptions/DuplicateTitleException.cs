@@ -1,6 +1,4 @@
-using System;
-
-namespace TodoApp.Domain.Exceptions
+namespace Domain.Exceptions
 {
     /// <summary>
     /// Exception thrown when attempting to create a Todo

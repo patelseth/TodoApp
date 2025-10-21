@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using TodoApp.Domain.Entities;
-using TodoApp.Application.Interfaces;
 using MongoDB.Driver;
-using TodoApp.Infrastructure.Settings;
+using Domain.Entities;
+using Infrastructure.Settings;
+using Application.Interfaces;
 
-namespace TodoApp.Infrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     /// <summary>
     /// Repository for Todo persistence using MongoDB.
@@ -16,13 +14,12 @@ namespace TodoApp.Infrastructure.Repositories
         private readonly IMongoCollection<Todo> _todos;
 
         /// <summary>
-        /// Constructor creates MongoDB client and gets the Todos collection.
+        /// Constructor uses injected IMongoDatabase and settings.
         /// </summary>
+        /// <param name="database">Injected MongoDB database</param>
         /// <param name="settings">MongoDB settings from configuration</param>
-        public TodoRepository(MongoDbSettings settings)
+        public TodoRepository(IMongoDatabase database, MongoDbSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
             _todos = database.GetCollection<Todo>("Todos");
         }
 

@@ -1,9 +1,10 @@
-using System;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using TodoApp.Domain.Exceptions;
+using Domain.Entities;
+using Domain.Exceptions;
+using System.Text.Json.Serialization;
 
-namespace TodoApp.Domain.Entities
+namespace Domain.Entities
 {
     /// <summary>
     /// Represents a Todo item with title, optional description, status, and timestamps.
@@ -31,6 +32,7 @@ namespace TodoApp.Domain.Entities
         /// <summary>
         /// Current status of the Todo.
         /// </summary>
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public TodoStatus Status { get; private set; }
 
         /// <summary>

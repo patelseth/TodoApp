@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
-using TodoApp.Application.Services;
-using TodoApp.Application.Interfaces;
-using TodoApp.Infrastructure.Repositories;
-using TodoApp.Infrastructure.Settings;
-using TodoApp.Domain.Entities;
-using TodoApp.Domain.Exceptions;
+using Domain.Entities;
+using Domain.Exceptions;
 using MongoDB.Driver;
+using Infrastructure.Repositories;
+using Application.Services;
+using Infrastructure.Settings;
+using Application.Interfaces;
 
-namespace TodoApp.IntegrationTests
+namespace IntegrationTests
 {
     /// <summary>
     /// Full integration tests for TodoService with MongoDB persistence.
@@ -24,25 +20,25 @@ namespace TodoApp.IntegrationTests
 
         public TodoServiceIntegrationTests()
         {
-            // MongoDB settings for tests
             var settings = new MongoDbSettings
             {
-                ConnectionString = "mongodb+srv://TodoAdmin:TodoAdmin123!@todocluster.uhecxgp.mongodb.net",
-                DatabaseName = "TodoDb"
+                ConnectionString = "mongodb+srv://TodoAdmin:TodoAdmin123@todocluster.uhecxgp.mongodb.net/?retryWrites=true&w=majority",
+                DatabaseName = "TodoDbTest"
             };
 
-            _repository = new TodoRepository(settings);
-            _service = new TodoService(_repository);
-
-            // Clean up collection before each test run
             var client = new MongoClient(settings.ConnectionString);
-            client.GetDatabase(settings.DatabaseName).DropCollection("Todos");
+            var database = client.GetDatabase(settings.DatabaseName);
+
+            _repository = new TodoRepository(database, settings);
+            _service = new TodoService(_repository);
         }
 
-        /// <summary>
-        /// Runs before any tests start. Optional: clean database if needed.
-        /// </summary>
-        public Task InitializeAsync() => Task.CompletedTask;
+        public async Task InitializeAsync()
+        {
+            var client = new MongoClient("mongodb+srv://TodoAdmin:TodoAdmin123@todocluster.uhecxgp.mongodb.net/?retryWrites=true&w=majority");
+            var db = client.GetDatabase("TodoDbTest");
+            await db.DropCollectionAsync("Todos");
+        }
 
         /// <summary>
         /// Runs after all tests finish. Clean up test todos.

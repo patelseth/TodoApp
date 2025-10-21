@@ -1,6 +1,4 @@
-using System;
-
-namespace TodoApp.Domain.Exceptions
+namespace Domain.Exceptions
 {
     /// <summary>
     /// Exception thrown when an invalid status transition is attempted on a Todo.

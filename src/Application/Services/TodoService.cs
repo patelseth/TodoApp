@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-using TodoApp.Application.Interfaces;
-using TodoApp.Domain.Entities;
-using TodoApp.Domain.Exceptions;
+using Application.Interfaces;
+using Domain.Entities;
+using Domain.Exceptions;
 
-namespace TodoApp.Application.Services
+namespace Application.Services
 {
     /// <summary>
     /// Service responsible for application-level operations on Todo items.
@@ -12,7 +11,7 @@ namespace TodoApp.Application.Services
     /// - OCP: Can be extended for additional rules without modifying entity logic.
     /// - DIP: Depends on ITodoRepository abstraction, not a concrete database.
     /// </summary>
-    public class TodoService
+    public class TodoService : ITodoService
     {
         private readonly ITodoRepository _repository;
 
@@ -59,6 +58,8 @@ namespace TodoApp.Application.Services
             if (todo == null)
                 throw new TodoNotFoundException(id);
 
+            var changed = false;
+
             // Only validate if title is actually changing
             if (todo.Title != newTitle)
             {
@@ -67,14 +68,18 @@ namespace TodoApp.Application.Services
                     throw new DuplicateTitleException();
 
                 todo.Title = newTitle;
+                changed = true;
             }
 
             // Update description if changed
             if (todo.Description != newDescription)
+            {
                 todo.Description = newDescription;
+                changed = true;
+            }
 
             // Persist only if any field changed
-            if (todo.Title != newTitle || todo.Description != newDescription)
+            if (changed)
                 await _repository.UpdateAsync(todo);
 
             return todo;
@@ -112,6 +117,20 @@ namespace TodoApp.Application.Services
                 todos = todos.Where(t => t.Status == status.Value);
 
             return todos;
+        }
+
+        
+        /// <summary>
+        /// Deletes a Todo by its Id. Throws if the entity does not exist.
+        /// </summary>
+        /// <param name="id">The Todo Id to delete.</param>
+        public async Task DeleteAsync(string id)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                throw new TodoNotFoundException(id);
+
+            await _repository.DeleteAsync(id);
         }
     }
 }
