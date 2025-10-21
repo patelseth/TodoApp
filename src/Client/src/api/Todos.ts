@@ -30,6 +30,7 @@ export async function createTodo(title: string, description?: string): Promise<T
 
 // Update an existing todo
 export async function updateTodo(id: string, title: string, description?: string): Promise<Todo> {
+  if (!title || !title.trim()) throw new Error('Title is required');
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

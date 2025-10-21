@@ -1,6 +1,5 @@
 import React from 'react';
 import { Todo } from '../models/Todo';
-import './TodoGrid.css';
 
 interface Props {
   todos: Todo[];
