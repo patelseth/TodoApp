@@ -4,7 +4,6 @@ namespace Application.Requests
     /// Record used for updating an existing Todo.
     /// </summary>
     public record UpdateTodoRequest(
-        string Id,
         string Title,
         string? Description
     );
