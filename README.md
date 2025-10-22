@@ -37,7 +37,7 @@ A full-stack To-Do List application built with **React** (frontend), **ASP.NET C
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/yourusername/TodoApp.git
+git clone https://github.com/patelseth/TodoApp.git
 cd TodoApp
 ```
 
@@ -107,8 +107,8 @@ TodoApp/
 │   │   ├── Api/                # ASP.NET Core Web API
 │   │   ├── Application/        # Application logic and requests
 │   │   ├── Domain/             # Domain entities and exceptions
-│   ├── Infrastructure/         # Configuration and infrastructure
-│   └── tests/                  # Backend tests (parallel to src)
+│   |   ├── Infrastructure/     # Configuration and infrastructure
+│   └── tests/                  # Backend tests
 ├── frontend/
 │   └── src/
 │       ├── api/            # API calls
