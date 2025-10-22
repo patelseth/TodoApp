@@ -5,6 +5,7 @@ using Infrastructure.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,23 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
+
+// Add a simple fixed window rate limiter (100 requests per 1 minute per IP)
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 100,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});    
 
 // Allow requests from React development server
 builder.Services.AddCors(options =>
@@ -52,6 +70,8 @@ builder.Services.AddSingleton<TodoService>();
 builder.Services.AddSingleton<ITodoService>(sp => sp.GetRequiredService<TodoService>());
 
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 // startup ping to surface auth/DNS errors early
 try
